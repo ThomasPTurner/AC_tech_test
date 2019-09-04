@@ -20,6 +20,12 @@ describe('calculateCosts', () => {
     it('charges 80p for each started minute' , () => {
         expect(utils.calculateCosts("0044123456,2019-09-04T12:42:01.636Z,00:01,OUTGOING")).to.equal(1.3)
     })
+    it('charges 15p for each started minute on a landline call', () => {
+        expect(utils.calculateCosts("0144123456,2019-09-04T12:42:01.636Z,00:01,OUTGOING")).to.equal(0.15)
+    })
+    it('charges 30p for each started minute on a mobile call', () => {
+        expect(utils.calculateCosts("0774123456,2019-09-04T12:42:01.636Z,00:01,OUTGOING")).to.equal(0.30)
+    })
 })
 
 describe('getOrigin', ()=> {
