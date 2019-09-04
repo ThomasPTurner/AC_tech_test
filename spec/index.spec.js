@@ -10,7 +10,7 @@ describe('getMostExpensive', () => {
     });
 });
 
-describe.only('calculateCosts', () => {
+describe('calculateCosts', () => {
     it('does not charge for incoming calls', ()=> {
         expect(utils.calculateCosts("0044123456,2019-09-04T12:42:01.636Z,01:00,INCOMING")).to.equal(0)
     })
@@ -25,6 +25,19 @@ describe.only('calculateCosts', () => {
 describe('getOrigin', ()=> {
     it('returns INTERNATIONAL for phone numbers beginning with 00', ()=> {
         expect(utils.getOrigin("0044123456")).to.equal('INTERNATIONAL')
+    })
+    it('returns MOBILE for phone numbers beginning with 07', () => {
+        expect(utils.getOrigin("0744123456")).to.equal('MOBILE')
+    })
+    it('does not return MOBILE for phone numbers beginning with 076', () => {
+        expect(utils.getOrigin("0764123456")).to.not.equal('MOBILE')
+    })
+    it('special mobile case for 07624', () => {
+        expect(utils.getOrigin("0762423456")).to.equal('MOBILE')
+    })
+    it('returns LANDLINE for phone numbers beginning with 01 or 02', () => {
+        expect(utils.getOrigin("0162423456")).to.equal('LANDLINE')
+        expect(utils.getOrigin("0262423456")).to.equal('LANDLINE')
     })
 })
 
