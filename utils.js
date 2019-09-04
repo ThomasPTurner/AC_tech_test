@@ -1,4 +1,4 @@
-const calculateCosts = (call, costObj) => {
+const calculateCosts = (call, costObj = {}) => {
     const [phoneNumber, startTime, duration, direction] = call.split(",")
     const callObj = {
         startTime,
