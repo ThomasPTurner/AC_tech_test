@@ -55,6 +55,11 @@ const calculateCosts = (call, costObj = {}) => {
 
 
 const getOrigin = (phoneNumber) => {
+    const validNumber = phoneNumber.match(/^\d{10}$/)
+    if (!validNumber) {
+        return "INVALID"
+    }
+
     if (phoneNumber.slice(0,5) === "07624") {
         return "MOBILE"
     }
@@ -70,5 +75,6 @@ const getOrigin = (phoneNumber) => {
     if (phoneNumber.slice(0,2) === "01" || phoneNumber.slice(0,2) === "02") {
         return "LANDLINE"
     }
+    return "INVALID"
 }
 module.exports = { calculateCosts, getOrigin }

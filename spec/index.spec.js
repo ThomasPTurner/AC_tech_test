@@ -63,7 +63,8 @@ describe('getOrigin', ()=> {
         expect(utils.getOrigin("0262423456")).to.equal('LANDLINE')
     })
     it('returns INVALID for bad numbers' , ()=> {
-
+        expect(utils.getOrigin("666666666666666666666666")).to.equal('INVALID')
+        expect(utils.getOrigin("02624234566666666666")).to.equal('INVALID')
     })
 })
 
