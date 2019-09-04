@@ -1,22 +1,22 @@
 const calculateCosts = (call, costObj = {}) => {
+    console.log(call)
     const [phoneNumber, startTime, duration, direction] = call.split(",")
-    const callObj = {
-        startTime,
-        duration,
-        direction,
-        cost: 0,
-        origin: getOrigin(phoneNumber)
-    }
-    if (callObj.direction === "INCOMING") return callObj
-    if (callObj.origin === "INTERNATIONAL") {
-        callObj.cost += 0.5
+    const minutes = +duration.slice(0,2)
+    const seconds = +duration.slice(3)
+    let cost = 0
+    const origin = getOrigin(phoneNumber)
+    if (direction === "INCOMING") return cost
+    if (origin === "INTERNATIONAL") {
+        cost += 0.5
+        cost += 0.8 * (minutes + seconds ? 1 : 0)
     }
     if (costObj[phoneNumber]) {
-        costObj[phoneNumber] = callObj.cost
+        costObj[phoneNumber] = cost
     } else {
-        costObj[phoneNumber] += callObj.cost
+        costObj[phoneNumber] += cost
     }
-    return callObj
+    // returns cost purely for testing
+    return cost
 }
 
 const getOrigin = (phoneNumber) => {
