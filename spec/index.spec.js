@@ -26,6 +26,9 @@ describe('calculateCosts', () => {
     it('charges 30p for each started minute on a mobile call', () => {
         expect(utils.calculateCosts("0774123456,2019-09-04T12:42:01.636Z,00:01,OUTGOING")).to.equal(0.30)
     })
+    it('is cheaper between 20:00 and 08:00', () => {
+        expect(utils.calculateCosts("0774123456,2019-09-04T20:01:01.636Z,00:01,OUTGOING")).to.equal(0.10)
+    })
 })
 
 describe('getOrigin', ()=> {
@@ -45,5 +48,6 @@ describe('getOrigin', ()=> {
         expect(utils.getOrigin("0162423456")).to.equal('LANDLINE')
         expect(utils.getOrigin("0262423456")).to.equal('LANDLINE')
     })
+    
 })
 
