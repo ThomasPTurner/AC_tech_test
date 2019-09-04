@@ -10,7 +10,7 @@ describe('getMostExpensive', () => {
     });
 });
 
-describe('calculateCosts', () => {
+describe.only('calculateCosts', () => {
     it('does not charge for incoming calls', ()=> {
         expect(utils.calculateCosts("0044123456,2019-09-04T12:42:01.636Z,01:00,INCOMING").cost).to.equal(0)
     })
@@ -20,7 +20,7 @@ describe('calculateCosts', () => {
 })
 
 describe('getOrigin', ()=> {
-    it('returns INTERNATIONAL for phone numbers beggining with 00', ()=> {
+    it('returns INTERNATIONAL for phone numbers beginning with 00', ()=> {
         expect(utils.getOrigin("0044123456")).to.equal('INTERNATIONAL')
     })
 })

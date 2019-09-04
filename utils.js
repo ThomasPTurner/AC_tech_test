@@ -4,7 +4,12 @@ const calculateCosts = (call, costObj = {}) => {
         startTime,
         duration,
         direction,
-        cost: 0
+        cost: 0,
+        origin: getOrigin(phoneNumber)
+    }
+    if (callObj.direction === "INCOMING") return callObj
+    if (callObj.origin === "INTERNATIONAL") {
+        callObj.cost += 0.5
     }
     if (costObj[phoneNumber]) {
         costObj[phoneNumber] = callObj.cost
@@ -14,4 +19,10 @@ const calculateCosts = (call, costObj = {}) => {
     return callObj
 }
 
-module.exports = { calculateCosts }
+const getOrigin = (phoneNumber) => {
+    if (phoneNumber.slice(0,2) === "00") {
+        return "INTERNATIONAL"
+    }
+}
+
+module.exports = { calculateCosts, getOrigin }
