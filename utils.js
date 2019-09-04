@@ -1,14 +1,24 @@
 const calculateCosts = (call, costObj = {}) => {
     const moment = require('moment')
     const [phoneNumber, startTime, duration, direction] = call.split(",")
-    const seconds = +duration.slice(3)
-    const minutes = +duration.slice(0,2) + seconds ? 1 : 0
+    const seconds = (+duration.slice(3) > 0)
+    let minutes = +duration.slice(0,2)
+    if (seconds > 0) minutes += 1
     let cost = 0
     const origin = getOrigin(phoneNumber)
     const isInternational = (origin === "INTERNATIONAL")
     const time = moment(startTime).hour()
     let chargeRate = 1
-    if (time >= 19 || time < 7) {
+    // create entry if doesn't exist
+    
+    if (!costObj[phoneNumber]) {
+        costObj[phoneNumber] = {
+            cost,
+            landLineMinutes: isInternational ? 0 : minutes,
+            internationalMinutes: isInternational ? minutes : 0
+        }
+    }
+    if (time > 20 || time < 9) {
         chargeRate = 1 / 3
     }
     if (direction === "INCOMING") return cost
@@ -17,28 +27,26 @@ const calculateCosts = (call, costObj = {}) => {
         cost += 0.8 * minutes * chargeRate
     }
     if (origin === "LANDLINE") {
-        cost += 0.15 * minutes * chargeRate
+        if (costObj[phoneNumber] && costObj[phoneNumber].landLineMinutes + minutes <= 100) {
+            cost = 0
+        }
+        else cost += 0.15 * minutes * chargeRate
     }
     if (origin === "MOBILE") {
         cost += 0.30 * minutes * chargeRate
     }
-    // fix JS being bad at floats
+    // fix JS being bad at floats  
     cost = Math.round(cost * 100) / 100
-    if (!costObj[phoneNumber]) {
-        costObj[phoneNumber] = {
-            cost,
-            landLineMinutes: isInternational ? 0 : minutes,
-            internationalMinutes: isInternational ? minutes : 0
-        }
-    } else {
-        costObj[phoneNumber].cost += cost
-        if (isInternational) {
-            costObj[phoneNumber].internationalMinutes += minutes
-        } else costObj[phoneNumber].internationalMinutes += minutes
-    }
+    
+    costObj[phoneNumber].cost += cost
+    if (isInternational) {
+        costObj[phoneNumber].internationalMinutes += minutes
+    } else costObj[phoneNumber].landLineMinutes += minutes
     // returns cost purely for testing
+    console.log(time, chargeRate)
     return cost
 }
+
 
 const getOrigin = (phoneNumber) => {
     if (phoneNumber.slice(0,5) === "07624") {
@@ -57,5 +65,4 @@ const getOrigin = (phoneNumber) => {
         return "LANDLINE"
     }
 }
-
 module.exports = { calculateCosts, getOrigin }

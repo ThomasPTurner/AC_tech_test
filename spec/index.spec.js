@@ -8,6 +8,9 @@ describe('getMostExpensive', () => {
     it('returns an object in the correct format', () => {
         expect(getMostExpensive(filepath)).to.have.keys("PhoneNumber", "TotalAmount")
     });
+    it('object has total combined cost', () => {
+        expect(getMostExpensive(filepath)["014412345"]).to.equal(0.15)
+    });
 });
 
 describe('calculateCosts', () => {
@@ -28,6 +31,11 @@ describe('calculateCosts', () => {
     })
     it('is cheaper between 20:00 and 08:00', () => {
         expect(utils.calculateCosts("0774123456,2019-09-04T20:01:01.636Z,00:01,OUTGOING")).to.equal(0.10)
+        expect(utils.calculateCosts("0774123456,2019-09-04T07:59:01.636Z,00:01,OUTGOING")).to.equal(0.10)
+    })
+    it.only("doesn't charge for the first 100 landline minutes", () => {
+        expect(utils.calculateCosts("0174123456,2019-09-04T20:01:01.636Z,00:01,OUTGOING", {["0174123456"]: {landLineMinutes: 99}})).to.equal(0);
+        expect(utils.calculateCosts("0174123456,2019-09-04T18:01:01.636Z,00:01,OUTGOING", {["0174123456"]: {landLineMinutes: 100}})).to.equal(0.15);
     })
 })
 
@@ -48,6 +56,5 @@ describe('getOrigin', ()=> {
         expect(utils.getOrigin("0162423456")).to.equal('LANDLINE')
         expect(utils.getOrigin("0262423456")).to.equal('LANDLINE')
     })
-    
 })
 
