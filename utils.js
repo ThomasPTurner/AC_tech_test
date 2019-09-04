@@ -9,13 +9,12 @@ const calculateCosts = (call, costObj = {}) => {
     const isInternational = (origin === "INTERNATIONAL")
     const time = moment(startTime).hour()
     let chargeRate = 1
-    // create entry if doesn't exist
-    
+    // create entry if doesn't exist    
     if (!costObj[phoneNumber]) {
         costObj[phoneNumber] = {
             cost,
-            landLineMinutes: isInternational ? 0 : minutes,
-            internationalMinutes: isInternational ? minutes : 0
+            landLineMinutes: 0,
+            internationalMinutes: 0
         }
     }
     if (time > 20 || time < 9) {
@@ -24,16 +23,24 @@ const calculateCosts = (call, costObj = {}) => {
     if (direction === "INCOMING") return cost
     if (origin === "INTERNATIONAL") {
         cost += 0.5
-        cost += 0.8 * minutes * chargeRate
+        if (costObj[phoneNumber].internationalMinutes < 10) {
+            const difference = -10 + costObj[phoneNumber].internationalMinutes + minutes
+            cost += difference > 0 ? 0.8 * difference * chargeRate : 0
+        } else cost += minutes * 0.8 * chargeRate
     }
     if (origin === "LANDLINE") {
-        if (costObj[phoneNumber] && costObj[phoneNumber].landLineMinutes + minutes <= 100) {
-            cost = 0
+        if (costObj[phoneNumber].landLineMinutes <= 100) {
+            const difference = -100 + costObj[phoneNumber].landLineMinutes + minutes
+            cost = difference > 0 ? 0.15 * difference * chargeRate : 0
         }
         else cost += 0.15 * minutes * chargeRate
     }
     if (origin === "MOBILE") {
-        cost += 0.30 * minutes * chargeRate
+        if (costObj[phoneNumber].landLineMinutes <= 100) {
+            const difference = -100 + costObj[phoneNumber].landLineMinutes + minutes
+            cost = difference > 0 ? 0.30 * difference * chargeRate : 0
+        }
+        else cost += 0.30 * minutes * chargeRate
     }
     // fix JS being bad at floats  
     cost = Math.round(cost * 100) / 100
@@ -43,7 +50,6 @@ const calculateCosts = (call, costObj = {}) => {
         costObj[phoneNumber].internationalMinutes += minutes
     } else costObj[phoneNumber].landLineMinutes += minutes
     // returns cost purely for testing
-    console.log(time, chargeRate)
     return cost
 }
 
