@@ -1,6 +1,7 @@
 const { expect } = require('chai')
 const utils = require('../utils')
 const filepath = "./data/example.csv"
+const invalidState = "./data/invalid.csv"
 const getMostExpensive = require('../solution')
 
 describe('getMostExpensive', () => {
@@ -12,6 +13,9 @@ describe('getMostExpensive', () => {
     });
     it('number is the largest cost', () => {
         expect(getMostExpensive(filepath).PhoneNumber).to.equal("0144123456")
+    })
+    it('returns null on all calls invalid or free', ()=> {
+        expect(getMostExpensive(invalidState)).to.be.null
     })
 });
 

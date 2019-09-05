@@ -7,7 +7,7 @@ const getMostExpensive = (filepath) => {
     dataArray.forEach((call) => {
         utils.calculateCosts(call, costsObj)
     })
-    let PhoneNumber = 0 
+    let PhoneNumber = 0
     let TotalAmount = 0
     for(let caller in costsObj) {
         if (costsObj[caller].cost > TotalAmount) {
@@ -15,6 +15,7 @@ const getMostExpensive = (filepath) => {
             TotalAmount = costsObj[caller].cost
         }
     }
+    if (TotalAmount === 0) return null
     return {
         PhoneNumber,
         TotalAmount: `£${TotalAmount.toFixed(2)}`
